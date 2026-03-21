@@ -11,7 +11,7 @@ This project implements a real-time eye blink detection and drowsiness monitorin
 
 ## Technologies
 - Python
-- OpenCV (cv2)
+- OpenCV 
 - MediaPipe
 - Tkinter
 - NumPy
