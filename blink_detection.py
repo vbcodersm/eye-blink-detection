@@ -166,5 +166,3 @@ winsound.PlaySound(None, winsound.SND_PURGE)
 
 cap.release()
 cv2.destroyAllWindows()
-
-This is my code . Analyze it. Dont need to reply
