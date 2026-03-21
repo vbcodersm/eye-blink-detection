@@ -21,4 +21,4 @@ This project implements a real-time eye blink detection and drowsiness monitorin
 - winsound
 
 ## GitHub Repository
-This repository contains the complete implementation of the project.
+This repository contains the complete implementation of the project.It uses an external alarm sound file (alarm.wav).
