@@ -9,7 +9,7 @@ import tkinter as tk
 from tkinter import filedialog
 import winsound
 
---- 1. Auto-Download Model ---
+#--- 1. Auto-Download Model ---
 
 model_path = 'face_landmarker.task'
 if not os.path.exists(model_path):
@@ -18,7 +18,7 @@ url = "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_land
 urllib.request.urlretrieve(url, model_path)
 print("Download complete!")
 
---- 2. Setup MediaPipe ---
+#--- 2. Setup MediaPipe ---
 
 base_options = python.BaseOptions(model_asset_path=model_path)
 options = vision.FaceLandmarkerOptions(
@@ -46,7 +46,7 @@ h = euclidean_distance(coords[0], coords[3])
  
 return (v1 + v2) / (2.0 * h)
 
---- 3. App Variables & Thresholds ---
+#--- 3. App Variables & Thresholds ---
 
 EAR_THRESHOLD = 0.25
 EAR_CONSEC_FRAMES = 8
@@ -82,7 +82,7 @@ print("\n--- INSTRUCTIONS ---")
 print("Click on the video window and press 'Enter', 'Esc', or 'q' to stop.")
 print("--------------------\n")
 
---- 5. Main Processing Loop ---
+#--- 5. Main Processing Loop ---
 
 while cap.isOpened():
 success, frame = cap.read()
@@ -101,49 +101,34 @@ if result.face_landmarks:
         left_ear = calculate_ear(face_landmarks, LEFT_EYE, img_w, img_h)  
         right_ear = calculate_ear(face_landmarks, RIGHT_EYE, img_w, img_h)  
         avg_ear = (left_ear + right_ear) / 2.0  
-         
-        # --- 1. COUNTING LOGIC ---  
+        
         if avg_ear < EAR_THRESHOLD:  
             closed_frames += 1     
             if closed_frames > 15:  
                 closed_frames=15    
             eye_closed = True  
         else:  
-            # Eyes just opened. Was it a blink or a drowsy state?  
             if eye_closed:  
                 if closed_frames < EAR_CONSEC_FRAMES:  
-                    # It was a normal blink. Count it and reset instantly.  
                     blink_count += 1  
                     closed_frames = 0  
-                eye_closed = False  
-              
-            # If recovering from drowsiness, gradually cool down the meter  
+                eye_closed = False 
             if closed_frames >= EAR_CONSEC_FRAMES:  
-                closed_frames -= 1  # Ticks down by 1 frame per loop  
+                closed_frames -= 1    
             else:  
-                closed_frames = 0   # Once safely awake, reset fully  
-                # --- 2. ALARM & UI LOGIC ---  
-        # This runs independently based on the current closed_frames count  
+                closed_frames = 0     
         if closed_frames >= EAR_CONSEC_FRAMES:
-
 extra_frames = closed_frames - EAR_CONSEC_FRAMES
 confidence = min(99.9, 75.0 + (extra_frames * 5.0))
-
-# Display the Warning and the cooling-down confidence score  
             cv2.putText(frame, f"DROWSY! Conf: {confidence:.1f}%", (10, 300),  
-                        cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 0, 255), 3)  
-              
-            # Keep alarm ringing  
+                        cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 0, 255), 3)    
             if not alarm_on:  
                 alarm_on = True  
                 winsound.PlaySound('alarm.wav', winsound.SND_FILENAME | winsound.SND_ASYNC | winsound.SND_LOOP)  
         else:  
-            # Stop the alarm immediately once confidence drops below 75%  
             if alarm_on:  
                 winsound.PlaySound(None, winsound.SND_PURGE)  
                 alarm_on = False  
-         
-        # --- DRAWING STATS ---  
         cv2.putText(frame, f"EAR: {avg_ear:.2f}", (30, 50),  
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)  
         cv2.putText(frame, f"Blinks: {blink_count}", (30, 100),  
@@ -155,8 +140,8 @@ confidence = min(99.9, 75.0 + (extra_frames * 5.0))
             cv2.circle(frame, (x, y), 2, (0, 255, 255), -1)  
 
 cv2.imshow("Blink & Drowsiness Detection", frame)  
- 
-# --- EXIT LOGIC ---  
+
+#--- 6. EXIT Logic ---  
 key = cv2.waitKey(1) & 0xFF  
 if key == ord('q') or key == 13 or key == 27:  
     break
