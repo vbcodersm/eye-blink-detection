@@ -56,7 +56,7 @@ closed_frames = 0
 eye_closed = False
 alarm_on = False
 
---- 4. Video Source Selection ---
+#--- 4. Video Source Selection ---
 
 root = tk.Tk()
 root.withdraw()
